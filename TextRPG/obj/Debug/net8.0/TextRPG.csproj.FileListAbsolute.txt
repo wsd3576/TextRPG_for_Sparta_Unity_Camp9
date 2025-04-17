@@ -1,0 +1,14 @@
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\bin\Debug\net8.0\TextRPG.exe
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\bin\Debug\net8.0\TextRPG.deps.json
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\bin\Debug\net8.0\TextRPG.runtimeconfig.json
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\bin\Debug\net8.0\TextRPG.dll
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\bin\Debug\net8.0\TextRPG.pdb
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\obj\Debug\net8.0\TextRPG.GeneratedMSBuildEditorConfig.editorconfig
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\obj\Debug\net8.0\TextRPG.AssemblyInfoInputs.cache
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\obj\Debug\net8.0\TextRPG.AssemblyInfo.cs
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\obj\Debug\net8.0\TextRPG.csproj.CoreCompileInputs.cache
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\obj\Debug\net8.0\TextRPG.dll
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\obj\Debug\net8.0\refint\TextRPG.dll
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\obj\Debug\net8.0\TextRPG.pdb
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\obj\Debug\net8.0\TextRPG.genruntimeconfig.cache
+D:\VisualStudio\C#Learning\TextRPG\TextRPG\obj\Debug\net8.0\ref\TextRPG.dll
