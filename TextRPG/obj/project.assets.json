@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\VisualStudio\\C#Learning\\TextRPG\\TextRPG\\TextRPG.csproj",
+      "projectUniqueName": "D:\\VisualStudio\\C#Learning\\TextRPG\\TextRPG_for_Sparta_Unity_Camp9\\TextRPG\\TextRPG.csproj",
       "projectName": "TextRPG",
-      "projectPath": "D:\\VisualStudio\\C#Learning\\TextRPG\\TextRPG\\TextRPG.csproj",
+      "projectPath": "D:\\VisualStudio\\C#Learning\\TextRPG\\TextRPG_for_Sparta_Unity_Camp9\\TextRPG\\TextRPG.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "D:\\VisualStudio\\C#Learning\\TextRPG\\TextRPG\\obj\\",
+      "outputPath": "D:\\VisualStudio\\C#Learning\\TextRPG\\TextRPG_for_Sparta_Unity_Camp9\\TextRPG\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "D:\\VisualStudio\\Shared\\NuGetPackages"

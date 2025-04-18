@@ -1,4 +1,6 @@
-﻿namespace TextRPG
+﻿using System.Numerics;
+
+namespace TextRPG
 {
     internal class TextRPG
     {
@@ -6,7 +8,7 @@
         {
             public string Name;
             public string Job;
-            public int[] PlayerState = { 1, 10, 5, 100, 1500 };
+            public float[] PlayerState = { 1, 10, 5, 100, 1500 };
             public int[] EquiptState = { 0, 0, 0 };
             public List<Item> Inventory = new List<Item>
             {
@@ -193,7 +195,7 @@
                     Console.WriteLine();
                     int select = Select(new string[] { "1.장착관리" }, true);
 
-                    if (items == null)
+                    if (items == null && select == 1)
                     {
                         ShowMessage("아이템이 없어 관리할 수 없습니다..");
                     }
@@ -230,6 +232,11 @@
                         }
                         else if (selectedItem.IsEquipped)
                         {
+                            if(selectedItem.Type == ItemType.Accessory && player.PlayerState[3] < 0)
+                            {
+                                ShowMessage($"해제할 수 없다.\n{selectedItem.Name}을(를) 해제하면 나는 죽고만다.");
+                                continue;
+                            }
                             selectedItem.IsEquipped = false;
                             player.EquiptState[slot] -= selectedItem.Value;
                             ShowMessage($"\n{selectedItem.Name}을(를) 해제했습니다.");
@@ -265,7 +272,8 @@
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine($"상점\n필요한 아이템을 얻을 수 있는 상점입니다.\n\n[보유 골드] {player.PlayerState[4]} G\n\n[아이템 목록]");
+                Console.WriteLine((mode == Mode.View ? "상점\n필요한 아이템을 얻을 수 있는 상점입니다." : "구매\n필요한 아이템을 골라주세요.") +
+                    $"\n\n[보유 골드] {player.PlayerState[4]} G\n\n[아이템 목록]");
                 string[]? items = DisplayInventory(mode, "Store");
 
 
@@ -297,6 +305,7 @@
                     if (choice == 0)
                     {
                         Console.Clear();
+                        Store(Mode.View);
                         return;
                     }
                     else if (choice >= 1 && choice <= storeItems.Count)
@@ -322,43 +331,63 @@
                 }
                 else if (mode == Mode.Sell)
                 {
-                    string[]? sellOption = DisplayInventory(Mode.Sell, "Inventory");
-
-                    if (sellOption == null)
+                    while (true)
                     {
-                        int input = DigitInput("\n0.나가기\n원하시는 행동을 입력해주세요.\n>>", 0, 0);
+                        Console.Clear();
+                        Console.WriteLine($"판매\n판매할 아이템을 골라주세요.\n\n[보유 골드] {player.PlayerState[4]} G\n\n[아이템 목록]");
+                        string[]? sellOption = DisplayInventory(Mode.Sell, "Inventory");
 
-                        if (input == 0)
+                        if (sellOption == null)
                         {
-                            Console.Clear();
+                            int input = DigitInput("\n0.나가기\n원하시는 행동을 입력해주세요.\n>>", 0, 0);
+
+                            if (input == 0)
+                            {
+                                Store(Mode.View);
+                                return;
+                            }
+                            else
+                            {
+                                ShowMessage("잘못된 입력입니다.");
+                                continue;
+                            }
+                        }
+
+                        int choice = Select(sellOption, true);
+
+                        if (choice >= 1 && choice <= playeritems.Count)
+                        {
+                            Item selectedItem = playeritems[choice - 1];
+                            int sellprice = (int)(selectedItem.Price * 0.85);
+
+                            if (Confirm($"{selectedItem.Name}을(를) {sellprice} G에 판매하시겠습니까?"))
+                            {
+                                if ((int)selectedItem.Type < 3 && selectedItem.IsEquipped)
+                                {
+                                    if (selectedItem.Type == ItemType.Accessory && player.PlayerState[3] < 0)
+                                    {
+                                        ShowMessage($"판매할 수 없다.\n{selectedItem.Name}을(를) 판매하면 나는 죽고만다.");
+                                        continue;
+                                    }
+                                    selectedItem.IsEquipped = false;
+                                    player.EquiptState[((int)selectedItem.Type)] -= selectedItem.Value;
+
+                                }
+
+                                player.Inventory.Remove(selectedItem);
+                                foreach (Item item in store.storeItems.Where(item => item.Name == selectedItem.Name))
+                                {
+                                    item.AlreadyBought = false;
+                                }
+                                player.PlayerState[4] += sellprice;
+                                ShowMessage($"{selectedItem.Name}을(를) 판매했습니다.");
+                            }
+                        }
+                        else if(choice == 0)
+                        {
+                            Store(Mode.View);
                             return;
                         }
-                        else ShowMessage("잘못된 입력입니다.");
-                    }
-
-                    int choice = Select(sellOption, true);
-
-                    if (choice >= 1 && choice <= playeritems.Count)
-                    {
-                        Item selectedItem = playeritems[choice - 1];
-                        int sellprice = (int)(selectedItem.Price * 0.85);
-
-                        if (Confirm($"{selectedItem.Name}을(를) {sellprice} G에 판매하시겠습니까?"))
-                        {
-                            if ((int)selectedItem.Type < 3 && selectedItem.IsEquipped)
-                            {
-                                selectedItem.IsEquipped = false;
-                                player.EquiptState[((int)selectedItem.Type)] -= selectedItem.Value;
-                            }
-                            player.Inventory.Remove(selectedItem);
-                            player.PlayerState[4] += sellprice;
-                            ShowMessage($"{selectedItem.Name}을(를) 판매했습니다.");
-                        }
-                    }
-                    else
-                    {
-                        Store(Mode.View);
-                        return;
                     }
                 }
             }
@@ -383,7 +412,8 @@
                 }
                 else if (selection == 1 && Confirm("500 G 를 내고 휴식하겠습니까?"))
                 {
-                    ShowMessage($"휴식을 완료했습니다. (체력 : {player.PlayerState[3]} -> {((player.PlayerState[3] + 50 <= 100) ? player.PlayerState[3] + 50 : 100)}");
+                    int totalHealth = (int)player.PlayerState[3] + player.EquiptState[2];
+                    ShowMessage($"휴식을 완료했습니다. (체력 : {totalHealth} -> {((player.PlayerState[3] + 50 <= 100) ? totalHealth + 50 : 100 + player.EquiptState[2])}");
                     player.PlayerState[3] = ((player.PlayerState[3] + 50 <= 100) ? player.PlayerState[3] + 50 : 100);
                     player.PlayerState[4] -= 500;
                     return;
@@ -420,49 +450,90 @@
                 int selection = Select(stages, true);
 
                 if (selection == 0) return;
+                else if (selection == -1) continue;
 
-                int totalDefence = player.PlayerState[2] + player.EquiptState[1];
-                int totalAttack = player.PlayerState[1] + player.EquiptState[0];
+                int totalAttack = (int)(player.PlayerState[1] + player.EquiptState[0]);
+                int totalDefence = (int)(player.PlayerState[2] + player.EquiptState[1]);
+                int totalHealth = (int)(player.PlayerState[3] + player.EquiptState[2]);
 
-                if (totalDefence < stageList[0].Item2)
+                if ((totalHealth - 35) < 0 && !Confirm("체력이 부족하다. 죽을 수도 있다. 그래도 도전할까?"))
+                {
+                    ShowMessage("\n휴식을 취하고 다시오자.");
+                    continue;
+                }
+
+                if (totalDefence < stageList[selection - 1].Item2)
                 {
                     int chance = random.Next(100);
-                    if (chance < 40)
+                    if(totalHealth == 1)
                     {
-                        ShowMessage($"던전 공략 실패!\n\n보상없음.\n체력을 {(player.PlayerState[3] + player.EquiptState[2]) / 2} 만큼 잃었습니다!");
-                        player.PlayerState[3] -= ((player.PlayerState[3] + player.EquiptState[2]) / 2);
-                        if (player.PlayerState[3] < 0)
-                        {
-                            player.PlayerState[3] = (player.EquiptState[2] != 0 ? 1 - player.EquiptState[2] : 1);
-                            ShowMessage("쓰러질 뻔 했지만 버텨냈다!!");
-                        }
-                        return;
+                        player.PlayerState[3]--;
+                        GameOver(1);
+                    }
+                    else if (chance < 40)
+                    {
+                        Console.Clear();
+                        ShowMessage($"던전 공략 실패!\n\n보상없음.\n체력을 {(int)(player.PlayerState[3] + player.EquiptState[2]) / 2} 만큼 잃었습니다!");
+                        player.PlayerState[3] -= (int)((player.PlayerState[3] + player.EquiptState[2]) / 2);
+                        continue;
                     }
                 }
 
-                int[] originalData = new int[] { player.PlayerState[3], player.PlayerState[4] };
-                int healthLost = (random.Next(20, 36)) - (totalDefence - stageList[0].Item2);
+                int originalGold = (int)player.PlayerState[4];
+                int healthLost = (random.Next(20, 36)) - (totalDefence - stageList[selection - 1].Item2);
                 float bonus = (random.Next(totalAttack, (totalAttack * 2) + 1)) / 100;
+
                 player.PlayerState[3] -= healthLost;
                 player.PlayerState[4] += (stageList[selection - 1].Item3 + (int)(stageList[selection - 1].Item3 * bonus));
+                for (int i = 0; i < 3; i++)
+                {
+                    if (i == 1)
+                    {
+                        player.PlayerState[i] += 0.5f;
+                    }
+                    player.PlayerState[i]++;
+                }
+
+                if (totalHealth - healthLost < 0) GameOver(healthLost);
 
                 while (true)
                 {
+                    Console.Clear();
                     Console.WriteLine($"던전 클리어\n축하합니다!!\n" +
                     $"{stageList[selection - 1].Item1}을 클리어 하였습니다.\n\n[탐험결과]\n" +
-                    $"체력 {originalData[0]} -> {player.PlayerState[3]}\n" +
-                    $"Gold {originalData[1]} -> {player.PlayerState[4]}");
+                    $"체력 {totalHealth} -> {totalHealth - healthLost}\n" +
+                    $"Gold {originalGold} -> {player.PlayerState[4]}");
 
                     int input = DigitInput("\n0.나가기\n원하시는 행동을 입력해주세요.\n>>", 0, 0);
 
                     if (input == 0)
                     {
                         Console.Clear();
-                        return;
+                        break;
                     }
                     else ShowMessage("잘못된 입력입니다.");
                 }
             }
+        }
+
+        void GameOver(int healthLost)
+        {
+            Console.Clear();
+            Console.WriteLine($"당신은 죽었습니다.\n체력을 {healthLost}만큼 잃어 {player.PlayerState[3] + player.EquiptState[2]}이(가) 되었습니다.\n[당신의 최종 상태]\n");
+            player.PlayerState[3] = 100;
+            string[] stats = { "Lv. ", "공격력 \t: ", "방어력 \t: ", "체력 \t: ", "Gold \t: " };
+            Console.WriteLine($"{stats[0]}{player.PlayerState[0]}\n{player.Name} ({player.Job})");
+
+            for (int i = 1; i < 5; i++)
+            {
+                Console.WriteLine($"{stats[i]}{player.PlayerState[i] + (i < 4 ? player.EquiptState[i - 1] : 0)} "
+                    + $"{(i < 4 ? (player.EquiptState[i - 1] != 0 ?
+                    $"(+{player.EquiptState[i - 1]})" : "") : "")}"
+                    + (i == 4 ? " G" : ""));
+            }
+            Console.WriteLine("아무 키나 누르면 종료됩니다...");
+            Console.ReadKey();
+            Environment.Exit(0);
         }
 
         string[]? DisplayInventory(Mode mode, string where)
