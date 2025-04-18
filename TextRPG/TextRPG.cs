@@ -209,6 +209,7 @@ namespace TextRPG
                         {
                             SaveManager.SaveGame(player, store);
                         }
+
                         break;
                     case 2 :
                         if (Confirm("저장된 파일을 불러옵니다. 확실합니까?(지금까지의 진행은 저장되지 않습니다.)"))
@@ -228,6 +229,7 @@ namespace TextRPG
                                 ShowMessage($"{loadedPlayer.Name}의 정보를 불러왔습니다.");
                             }
                         }
+
                         break;
                     case 0:
                         Console.Clear();
