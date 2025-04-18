@@ -1,19 +1,12 @@
 {
   "Player": {
-    "Name": "CHATTT",
-    "Job": "전사",
-    "PlayerState": [
-      4.0,
-      14.5,
-      8.0,
-      3.0,
-      7350.0
-    ],
-    "EquiptState": [
-      0,
-      9,
-      10
-    ],
+    "Name": "TestPlayer",
+    "Job": "도적",
+    "Level": 5,
+    "Attack": 12.0,
+    "Defence": 9,
+    "Health": 53,
+    "Gold": 6750,
     "Inventory": [
       {
         "Name": "추억의 목걸이",
@@ -25,15 +18,21 @@
         "AlreadyBought": false
       },
       {
-        "Name": "무쇠갑옷",
+        "Name": "스파르타의 갑옷",
         "Type": 1,
-        "Value": 9,
-        "Description": "무쇠로 만들어져 튼튼한 갑옷입니다.",
-        "Price": 2000,
+        "Value": 15,
+        "Description": "스파르타의 전사들이 사용했다는 전설의 갑옷입니다.",
+        "Price": 3500,
         "IsEquipped": true,
         "AlreadyBought": false
       }
-    ]
+    ],
+    "EquiptAttack": 0,
+    "EquiptDefence": 15,
+    "EquiptHealth": 10,
+    "TotalAttack": 12.0,
+    "TotalDefence": 24,
+    "TotalHealth": 63
   },
   "Store": {
     "storeItems": [
@@ -53,7 +52,7 @@
         "Description": "무쇠로 만들어져 튼튼한 갑옷입니다.",
         "Price": 2000,
         "IsEquipped": false,
-        "AlreadyBought": true
+        "AlreadyBought": false
       },
       {
         "Name": "스파르타의 갑옷",
@@ -62,7 +61,7 @@
         "Description": "스파르타의 전사들이 사용했다는 전설의 갑옷입니다.",
         "Price": 3500,
         "IsEquipped": false,
-        "AlreadyBought": false
+        "AlreadyBought": true
       },
       {
         "Name": "낡은 검",
