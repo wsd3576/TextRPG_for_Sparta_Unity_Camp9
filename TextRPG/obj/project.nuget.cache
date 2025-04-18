@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "xSMZX4/Nbrk=",
+  "dgSpecHash": "vweqVk+XI38=",
   "success": true,
   "projectFilePath": "D:\\VisualStudio\\C#Learning\\TextRPG\\TextRPG_for_Sparta_Unity_Camp9\\TextRPG\\TextRPG.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\user\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
   "logs": []
 }

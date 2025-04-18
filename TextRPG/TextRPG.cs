@@ -1,16 +1,57 @@
-﻿using System.Numerics;
+﻿using Newtonsoft.Json;
+using static TextRPG.TextRPG;
 
 namespace TextRPG
 {
     internal class TextRPG
     {
+        public static class SaveManager
+        {
+            private static string saveFilePath = "save.json";
+
+            public static void SaveGame(PlayerInfo player, StoreInfo store)
+            {
+                GameData gameData = new GameData(player, store);
+                string json = JsonConvert.SerializeObject(gameData, Formatting.Indented);
+                File.WriteAllText(saveFilePath, json);
+            }
+
+            public static (PlayerInfo, StoreInfo) LoadGame()
+            {
+                if (!File.Exists(saveFilePath))
+                {
+                    Console.WriteLine("저장 파일이 존재하지 않습니다.");
+                    return (null, null);
+                }
+
+                string json = File.ReadAllText(saveFilePath);
+                GameData gameData = JsonConvert.DeserializeObject<GameData>(json);
+
+                return (gameData.Player, gameData.Store);
+            }
+        }
+
+        public class GameData
+        {
+            public PlayerInfo Player { get; set; }
+            public StoreInfo Store { get; set; }
+
+            public GameData() { }
+
+            public GameData(PlayerInfo player, StoreInfo store)
+            {
+                Player = player;
+                Store = store;
+            }
+        }
+
         public class PlayerInfo
         {
-            public string Name;
-            public string Job;
-            public float[] PlayerState = { 1, 10, 5, 100, 1500 };
-            public int[] EquiptState = { 0, 0, 0 };
-            public List<Item> Inventory = new List<Item>
+            public string Name { get; set; }
+            public string Job { get; set; }
+            public float[] PlayerState { get; set; } = { 1, 10, 5, 100, 1500 };
+            public int[] EquiptState { get; set; } = { 0, 0, 0 };
+            public List<Item> Inventory { get; set; } = new List<Item>
             {
                 new Item("초심자의 검", ItemType.Weapon, 3, "철로 만들어진 보급형 검.", 500),
                 new Item("초심자의 갑옷", ItemType.Armor, 3, "철로 만들어진 보급형 값옷.", 500),
@@ -20,7 +61,7 @@ namespace TextRPG
 
         public class StoreInfo
         {
-            public List<Item> storeItems = new List<Item>
+            public List<Item> storeItems { get; set; } = new List<Item>
             {
                 new Item("수련자 갑옷", ItemType.Armor, 5, "수련에 도움을 주는 갑옷입니다.", 1000),
                 new Item("무쇠갑옷", ItemType.Armor, 9, "무쇠로 만들어져 튼튼한 갑옷입니다.", 2000),
@@ -41,13 +82,15 @@ namespace TextRPG
 
         public class Item
         {
-            public string Name;
-            public ItemType Type;
-            public int Value;
-            public string Description;
-            public int Price;
-            public bool IsEquipped = false;
-            public bool AlreadyBought;
+            public string Name { get; set; }
+            public ItemType Type { get; set; }
+            public int Value { get; set; }
+            public string Description { get; set; }
+            public int Price { get; set; }
+            public bool IsEquipped { get; set; }
+            public bool AlreadyBought { get; set; }
+
+            public Item() { }
 
             public Item(string name, ItemType type, int value, string description, int price, bool isEquipped = false, bool alreadyBought = false)
             {
@@ -155,15 +198,45 @@ namespace TextRPG
                         $"(+{player.EquiptState[i - 1]})" : "") : "")}"
                         + (i == 4 ? " G" : ""));
                 }
+                Console.WriteLine();
 
-                int input = DigitInput("\n0.나가기\n해당하는 번호를 입력해주세요.\n>>", 0, 0);
+                int input = Select(new string[] { "1.저장하기", "2.불러오기" }, true);
 
-                if (input == 0)
+                switch (input)
                 {
-                    Console.Clear();
-                    return;
+                    case 1 :
+                        if(Confirm("현재 상태를 저장합니다. 확실합니까?(기존의 저장은 삭제됩니다.)"))
+                        {
+                            SaveManager.SaveGame(player, store);
+                        }
+                        break;
+                    case 2 :
+                        if (Confirm("저장된 파일을 불러옵니다. 확실합니까?(지금까지의 진행은 저장되지 않습니다.)"))
+                        {
+                            (PlayerInfo loadedPlayer, StoreInfo loadedStore) = SaveManager.LoadGame();
+
+                            if (loadedPlayer != null && loadedStore != null)
+                            {
+                                player.Inventory.Clear();
+                                Array.Clear(player.PlayerState, 0, player.PlayerState.Length);
+                                Array.Clear(player.EquiptState, 0, player.EquiptState.Length);
+                                store.storeItems.Clear();
+
+                                player = loadedPlayer;
+                                store = loadedStore;
+
+                                ShowMessage($"{loadedPlayer.Name}의 정보를 불러왔습니다.");
+                            }
+                        }
+                        break;
+                    case 0:
+                        Console.Clear();
+                        return;
+                    default :
+                        ShowMessage("잘못된 입력입니다.");
+                        break;
                 }
-                else ShowMessage("잘못된 입력입니다.");
+
             }
         }
 
@@ -459,6 +532,9 @@ namespace TextRPG
                     }
                     else if (chance < 40)
                     {
+                        ShowMessage(".");
+                        ShowMessage("..");
+                        ShowMessage("...");
                         ShowMessage($"던전 공략 실패!\n\n보상없음.\n체력을 {(int)(player.PlayerState[3] + player.EquiptState[2]) / 2} 만큼 잃었습니다!");
                         player.PlayerState[3] -= (int)((player.PlayerState[3] + player.EquiptState[2]) / 2);
                         continue;
@@ -484,6 +560,9 @@ namespace TextRPG
 
                 while (true)
                 {
+                    ShowMessage(".");
+                    ShowMessage("..");
+                    ShowMessage("...");
                     Console.WriteLine($"던전 클리어\n축하합니다!!\n" +
                     $"{stageList[selection - 1].Item1}을 클리어 하였습니다.\n\n[탐험결과]\n" +
                     $"체력 {totalHealth} -> {totalHealth - healthLost}\n" +

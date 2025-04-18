@@ -27,3 +27,6 @@ D:\VisualStudio\C#Learning\TextRPG\TextRPG_for_Sparta_Unity_Camp9\TextRPG\obj\De
 D:\VisualStudio\C#Learning\TextRPG\TextRPG_for_Sparta_Unity_Camp9\TextRPG\obj\Debug\net8.0\TextRPG.pdb
 D:\VisualStudio\C#Learning\TextRPG\TextRPG_for_Sparta_Unity_Camp9\TextRPG\obj\Debug\net8.0\TextRPG.genruntimeconfig.cache
 D:\VisualStudio\C#Learning\TextRPG\TextRPG_for_Sparta_Unity_Camp9\TextRPG\obj\Debug\net8.0\ref\TextRPG.dll
+D:\VisualStudio\C#Learning\TextRPG\TextRPG_for_Sparta_Unity_Camp9\TextRPG\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\VisualStudio\C#Learning\TextRPG\TextRPG_for_Sparta_Unity_Camp9\TextRPG\obj\Debug\net8.0\TextRPG.csproj.AssemblyReference.cache
+D:\VisualStudio\C#Learning\TextRPG\TextRPG_for_Sparta_Unity_Camp9\TextRPG\obj\Debug\net8.0\TextRPG.csproj.Up2Date
