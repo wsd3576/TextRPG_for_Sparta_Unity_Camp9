@@ -554,6 +554,7 @@ namespace TextRPG
                     if (i == 1)
                     {
                         player.PlayerState[i] += 0.5f;
+                        continue;
                     }
                     player.PlayerState[i]++;
                 }
