@@ -83,8 +83,6 @@ namespace TextRPG
                     player.Name = input;
                     break;
                 }
-
-                Console.Clear();
             }
 
             while (true)
@@ -92,7 +90,6 @@ namespace TextRPG
                 string[] jobs = { "전사", "도적", "궁수" };
                 string[] jobOptions = new string[jobs.Length];
 
-                Console.Clear();
                 Console.WriteLine("당신의 직업은 무엇인가요?");
 
                 for (int i = 0; i < jobs.Length; i++)
@@ -117,7 +114,6 @@ namespace TextRPG
         {
             while (true)
             {
-                Console.Clear();
                 Console.WriteLine("마을에 오신걸 환영합니다.\n이곳에서 던전에 들어가기 전 행동을 할 수 있습니다.\n");
 
                 int selection = Select(new string[] { "1.상태보기", "2.인벤토리", "3.상점", "4.휴식하기", "5.던전입장" }, false);
@@ -147,7 +143,6 @@ namespace TextRPG
         {
             while (true)
             {
-                Console.Clear();
                 Console.WriteLine($"상태 보기\n캐릭터의 정보가 표시됩니다.\n");
 
                 string[] stats = { "Lv. ", "공격력 \t: ", "방어력 \t: ", "체력 \t: ", "Gold \t: " };
@@ -161,7 +156,7 @@ namespace TextRPG
                         + (i == 4 ? " G" : ""));
                 }
 
-                int input = DigitInput("\n0.나가기\n원하시는 행동을 입력해주세요.\n>>", 0, 0);
+                int input = DigitInput("\n0.나가기\n해당하는 번호를 입력해주세요.\n>>", 0, 0);
 
                 if (input == 0)
                 {
@@ -183,7 +178,6 @@ namespace TextRPG
         {
             while (true)
             {
-                Console.Clear();
                 Console.WriteLine(mode == Mode.View ?
                     "인벤토리\n보유 중인 아이템을 관리할 수 있습니다.\n\n[아이템 목록]" :
                     "장착 관리\n보유 중인 아이템을 관리할 수 있습니다.\n\n[아이템 목록]");
@@ -205,7 +199,6 @@ namespace TextRPG
                     }
                     else if (select == 0)
                     {
-                        Console.Clear();
                         return;
                     }
                 }
@@ -215,7 +208,6 @@ namespace TextRPG
 
                     if (choice == 0)
                     {
-                        Console.Clear();
                         return;
                     }
 
@@ -239,7 +231,7 @@ namespace TextRPG
                             }
                             selectedItem.IsEquipped = false;
                             player.EquiptState[slot] -= selectedItem.Value;
-                            ShowMessage($"\n{selectedItem.Name}을(를) 해제했습니다.");
+                            ShowMessage($"{selectedItem.Name}을(를) 해제했습니다.");
                         }
                         else
                         {
@@ -253,7 +245,7 @@ namespace TextRPG
 
                             selectedItem.IsEquipped = true;
                             player.EquiptState[slot] += selectedItem.Value;
-                            ShowMessage($"\n{selectedItem.Name}을(를) 장착했습니다.");
+                            ShowMessage($"{selectedItem.Name}을(를) 장착했습니다.");
                         }
                     }
                 }
@@ -271,9 +263,8 @@ namespace TextRPG
 
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine((mode == Mode.View ? "상점\n필요한 아이템을 얻을 수 있는 상점입니다." : "구매\n필요한 아이템을 골라주세요.") +
-                    $"\n\n[보유 골드] {player.PlayerState[4]} G\n\n[아이템 목록]");
+                Console.Write((mode == Mode.View ? "상점\n필요한 아이템을 얻을 수 있는 상점입니다." : (mode == Mode.Interaction ? "구매\n필요한 아이템을 골라주세요." : "")) +
+                    (mode != Mode.Sell ? $"\n\n[보유 골드] {player.PlayerState[4]} G\n\n[아이템 목록]\n" : ""));
                 string[]? items = DisplayInventory(mode, "Store");
 
 
@@ -294,7 +285,6 @@ namespace TextRPG
                     }
                     else if (select == 0)
                     {
-                        Console.Clear();
                         return;
                     }
                 }
@@ -304,7 +294,6 @@ namespace TextRPG
 
                     if (choice == 0)
                     {
-                        Console.Clear();
                         Store(Mode.View);
                         return;
                     }
@@ -333,16 +322,16 @@ namespace TextRPG
                 {
                     while (true)
                     {
-                        Console.Clear();
                         Console.WriteLine($"판매\n판매할 아이템을 골라주세요.\n\n[보유 골드] {player.PlayerState[4]} G\n\n[아이템 목록]");
                         string[]? sellOption = DisplayInventory(Mode.Sell, "Inventory");
 
                         if (sellOption == null)
                         {
-                            int input = DigitInput("\n0.나가기\n원하시는 행동을 입력해주세요.\n>>", 0, 0);
+                            int input = DigitInput("\n0.나가기\n해당하는 번호를 입력해주세요.\n>>", 0, 0);
 
                             if (input == 0)
                             {
+                                Console.Clear();
                                 Store(Mode.View);
                                 return;
                             }
@@ -397,7 +386,6 @@ namespace TextRPG
         {
             while (true)
             {
-                Console.Clear();
                 Console.WriteLine($"휴식하기\n500 G 를 내면 체력을 회복할 수 있습니다.[보유 골드] {player.PlayerState[4]} G");
                 int selection = Select(new string[] { "1.휴식하기" }, true);
 
@@ -416,7 +404,7 @@ namespace TextRPG
                     ShowMessage($"휴식을 완료했습니다. (체력 : {totalHealth} -> {((player.PlayerState[3] + 50 <= 100) ? totalHealth + 50 : 100 + player.EquiptState[2])}");
                     player.PlayerState[3] = ((player.PlayerState[3] + 50 <= 100) ? player.PlayerState[3] + 50 : 100);
                     player.PlayerState[4] -= 500;
-                    return;
+                    continue;
                 }
                 else if (selection == 0)
                 {
@@ -430,7 +418,6 @@ namespace TextRPG
             Random random = new Random();
             while (true)
             {
-                Console.Clear();
                 Console.WriteLine("던전입장\n이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
 
                 List<(string, int, int)> stageList = new List<(string, int, int)>
@@ -458,7 +445,7 @@ namespace TextRPG
 
                 if ((totalHealth - 35) < 0 && !Confirm("체력이 부족하다. 죽을 수도 있다. 그래도 도전할까?"))
                 {
-                    ShowMessage("\n휴식을 취하고 다시오자.");
+                    ShowMessage("휴식을 취하고 다시오자.");
                     continue;
                 }
 
@@ -472,7 +459,6 @@ namespace TextRPG
                     }
                     else if (chance < 40)
                     {
-                        Console.Clear();
                         ShowMessage($"던전 공략 실패!\n\n보상없음.\n체력을 {(int)(player.PlayerState[3] + player.EquiptState[2]) / 2} 만큼 잃었습니다!");
                         player.PlayerState[3] -= (int)((player.PlayerState[3] + player.EquiptState[2]) / 2);
                         continue;
@@ -498,13 +484,12 @@ namespace TextRPG
 
                 while (true)
                 {
-                    Console.Clear();
                     Console.WriteLine($"던전 클리어\n축하합니다!!\n" +
                     $"{stageList[selection - 1].Item1}을 클리어 하였습니다.\n\n[탐험결과]\n" +
                     $"체력 {totalHealth} -> {totalHealth - healthLost}\n" +
                     $"Gold {originalGold} -> {player.PlayerState[4]}");
 
-                    int input = DigitInput("\n0.나가기\n원하시는 행동을 입력해주세요.\n>>", 0, 0);
+                    int input = DigitInput("\n0.나가기\n해당하는 번호를 입력해주세요.\n>>", 0, 0);
 
                     if (input == 0)
                     {
@@ -518,7 +503,10 @@ namespace TextRPG
 
         void GameOver(int healthLost)
         {
-            Console.Clear();
+            ShowMessage(".");
+            ShowMessage("..");
+            ShowMessage("...");
+            ShowMessage("앗...!");
             Console.WriteLine($"당신은 죽었습니다.\n체력을 {healthLost}만큼 잃어 {player.PlayerState[3] + player.EquiptState[2]}이(가) 되었습니다.\n[당신의 최종 상태]\n");
             player.PlayerState[3] = 100;
             string[] stats = { "Lv. ", "공격력 \t: ", "방어력 \t: ", "체력 \t: ", "Gold \t: " };
@@ -600,6 +588,7 @@ namespace TextRPG
         {
             Console.WriteLine(message);
             Thread.Sleep(1000);
+            Console.Clear();
         }
 
         bool Confirm(string question)
@@ -609,11 +598,20 @@ namespace TextRPG
                 Console.Clear();
                 int input = DigitInput($"{question}\n1.맞다\t2.아니다\n\n>>", 1, 2);
 
-                if (input == 1) return true;
-                else if (input == 2) return false;
+                if (input == 1)
+                {
+                    Console.Clear();
+                    return true;
+                }
+                else if (input == 2)
+                {
+                    Console.Clear();
+                    return false;
+                }
 
                 ShowMessage("잘못된 입력입니다.");
             }
+
         }
 
         int Select(string[] options, bool hasExit)
@@ -624,7 +622,11 @@ namespace TextRPG
             }
             int input = DigitInput($"{(hasExit ? "\n0.나가기" : "")}\n해당하는 번호를 입력해주세요.\n>>", 0, options.Length);
 
-            if ((input >= 1 && input <= options.Length) || (hasExit && input == 0)) return input;
+            if ((input >= 1 && input <= options.Length) || (hasExit && input == 0))
+            {
+                Console.Clear();
+                return input;
+            }
             else
             {
                 ShowMessage("잘못된 입력입니다.");
